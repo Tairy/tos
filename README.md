@@ -4,7 +4,7 @@ Tairy's Operating System.
 
 ## Develop
 
-## Bochs
+### Bochs
 
 ```bash
 cd .
