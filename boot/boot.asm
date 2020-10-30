@@ -7,11 +7,11 @@ BaseOfLoader equ 0x1000
 OffsetOfLoader equ 0x00
 
 RootDirSectors equ 14  ; 根目录占用的扇区数
-SectorNumOfRootDirStart equ 19  ; 根目录起始扇区号 保留扇区数 + FAT 表扇区数 * FAT 表份数 
+SectorNumOfRootDirStart equ 19  ; 根目录起始扇区号 保留扇区数 + FAT 表扇区数 * FAT 表份数
 SectorNumOfFAT1Start equ 1  ; FAT1 起始扇区号
 SectorBalance equ 17 ; 平衡文件（或者目录）的其实簇号与数据区起始簇号的差
 
-    jmp short Label_Start
+    jmp short Label_Start ; 短转移，最高 128
     nop
     BS_OEMName db 'TAOSboot'
     BPB_BytesPerSec dw 512
