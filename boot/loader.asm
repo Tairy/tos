@@ -143,7 +143,7 @@ Label_No_LoaderBin:
     mov ax, 1301h
     mov bx, 008Ch
     mov dx, 0300h
-    mov cx, 21
+    mov cx, 21 ; 显示字符长度
     push ax
     mov ax, ds
     mov es, ax

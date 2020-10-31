@@ -2,10 +2,11 @@
 
 RED_COLOR='\E[1;31m'
 RESET='\E[0m'
+BOOT_DIR='./boot'
 
 echo -e "${RED_COLOR}=== env check ===${RESET}"
 
-if [ ! -e ../.bochsrc ]; then
+if [ ! -e .bochsrc ]; then
   echo "no .bochsrc,please checkout!"
   exit 1
 fi
@@ -22,7 +23,7 @@ else
   echo "no bximge find!,Please check your bochs environment"
 fi
 
-if [ -e boot.img ]; then
+if [ -e ${BOOT_DIR}/boot.img ]; then
   echo "find boot.img !"
 else
   echo "no boot.img! generating..."
@@ -44,26 +45,26 @@ else
 fi
 
 echo -e "${RED_COLOR}=== gen boot.bin ===${RESET}"
-nasm boot.asm -o boot.bin
-nasm loader.asm -o loader.bin
+nasm ${BOOT_DIR}/boot.asm -o ${BOOT_DIR}/boot.bin
+nasm ${BOOT_DIR}/loader.asm -o ${BOOT_DIR}/loader.bin
 echo -e "${RED_COLOR}=== write boot.bin  to boot.img ===${RESET}"
-dd if=boot.bin of=boot.img bs=512 count=1 conv=notrunc
+dd if=${BOOT_DIR}/boot.bin of=${BOOT_DIR}/boot.img bs=512 count=1 conv=notrunc
 echo -e "${RED_COLOR}=== running..PS:emulator will stop at beginning,press 'c' to running ===${RESET}"
 
 if [ ! -e tmp ]; then
   mkdir tmp
 fi
 
-mount -t vfat -o loop boot.img tmp/
+mount -t vfat -o loop ${BOOT_DIR}/boot.img tmp/
 
-cp loader.bin tmp/
+cp ${BOOT_DIR}/loader.bin tmp/
 sync
 umount tmp/
 
-rmdir tmp
+rm -rf tmp
 
 if [ -e /usr/local/bin/bochs ]; then
-  /usr/local/bin/bochs -qf ../.bochsrc
+  /usr/local/bin/bochs -qf .bochsrc
 else
   echo "Please check your bochs environment!!!"
   exit 1
