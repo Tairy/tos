@@ -628,23 +628,23 @@ IDT_POINTER:
     dd IDT
 
 ;====== tmp variable
-RootDirSizeForLoop dw RootDirSectors
-SectorNo dw 0
-Odd db 0
-OffsetOfKernelFileCount dd OffsetOfKernelFile
+RootDirSizeForLoop      dw  RootDirSectors
+SectorNo                dw  0
+Odd                     db  0
+OffsetOfKernelFileCount dd  OffsetOfKernelFile
 DisplayPosition dd 0
 
-StartLoaderMessage: db "Start Loader"
-NoLoaderMessage: db "ERROR:No KERNEL Found"
-KernelFileName: db "KERBAL  BIN", 0
-StartGetMemStructMessage: db "Start Get Memory Struct."
-GetMemStructErrMessage: db "Get Memory Struct ERROR"
-GetMemStructOkMessage: db "Get Memory Struct SUCCESSFUL!"
+StartLoaderMessage:             db  "Start Loader"
+NoLoaderMessage:                db  "ERROR:No KERNEL Found"
+KernelFileName:                 db  "KERNEL  BIN",0
+StartGetMemStructMessage:       db  "Start Get Memory Struct."
+GetMemStructErrMessage:         db  "Get Memory Struct ERROR"
+GetMemStructOkMessage:          db  "Get Memory Struct SUCCESSFUL!"
 
-StartGetSVGAVBEInfoMessage: db "Start Get SVGA VBE Info"
-GetSVGAVBEInfoErrMessage: db "Get SVGA VBE Info ERROR"
-GetSVGAVBEInfoOKMessage: db "Get SVGA VBE Info SUCCESSFUL!"
+StartGetSVGAVBEInfoMessage:     db  "Start Get SVGA VBE Info"
+GetSVGAVBEInfoErrMessage:       db  "Get SVGA VBE Info ERROR"
+GetSVGAVBEInfoOKMessage:        db  "Get SVGA VBE Info SUCCESSFUL!"
 
-StartGetSVGAModeInfoMessage: db "Start Get SVGA Mode Info"
-GetSVGAModeInfoErrMessage: db "Get SVGA Mode Info ERROR"
-GetSVGAModeInfoOKMessage: db "Get SVGA Mode Info SUCCESSFUL!"
+StartGetSVGAModeInfoMessage:    db  "Start Get SVGA Mode Info"
+GetSVGAModeInfoErrMessage:      db  "Get SVGA Mode Info ERROR"
+GetSVGAModeInfoOKMessage:       db  "Get SVGA Mode Info SUCCESSFUL!"
