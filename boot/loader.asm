@@ -11,30 +11,34 @@ OffsetTmpOfKernelFile equ 0x7E00 ; 内核程序临时转存空间
 
 MemoryStructBufferAddr equ 0x7E00
 
-[SECTION gdt]
-LABEL_GDT:          dd 0, 0
-LABEL_DESC_CODE32:  dd 0x0000FFFF, 0x00CF9A00
-LABEL_DESC_DATA32:  dd 0x0000FFFF, 0x00CF9200
+; 保护模式 GDT 结构
+[SECTION .gdt]
 
-GdtLen equ $ - LABEL_GDT
-GdtPtr dw GdtLen - 1
-    dd LABEL_GDT
+LABEL_GDT:          dd  0,           0
+LABEL_DESC_CODE32:  dd  0x0000FFFF,  0x00CF9A00
+LABEL_DESC_DATA32:  dd  0x0000FFFF,  0x00CF9200
 
-SelectorCode32 equ LABEL_DESC_CODE32 - LABEL_GDT
-SelectorData32 equ LABEL_DESC_DATA32 - LABEL_GDT
+GdtLen  equ $ - LABEL_GDT ; GDT 长度
+GdtPtr  dw  GdtLen - 1    ; GDT 界限
+        dd  LABEL_GDT     ; GDT 基地址
 
-[SECTION gdt64]
+; GDT 选择子
+SelectorCode32  equ LABEL_DESC_CODE32 - LABEL_GDT
+SelectorData32  equ LABEL_DESC_DATA32 - LABEL_GDT
 
-LABEL_GDT64:        dq 0x0000000000000000
-LABEL_DESC_CODE64:  dq 0x0020980000000000
-LABEL_DESC_DATA64:  dq 0x0000920000000000
+; IA-32e 模式 GDT 结构
+[SECTION .gdt64]
 
-GdtLen64 equ $ - LABEL_GDT64
-GdtPtr64 dw GdtLen64 - 1
-    dd LABEL_GDT64
+LABEL_GDT64:        dq  0x0000000000000000
+LABEL_DESC_CODE64:  dq  0x0020980000000000
+LABEL_DESC_DATA64:  dq  0x0000920000000000
 
-SelectorCode64 equ LABEL_DESC_CODE64 - LABEL_GDT64
-SelectorData64 equ LABEL_DESC_DATA64 - LABEL_GDT64
+GdtLen64    equ $ - LABEL_GDT64
+GdtPtr64    dw  GdtLen64 - 1
+            dd  LABEL_GDT64
+
+SelectorCode64  equ LABEL_DESC_CODE64 - LABEL_GDT64
+SelectorData64  equ LABEL_DESC_DATA64 - LABEL_GDT64
 
 [SECTION .s16]
 [BITS 16]
@@ -51,8 +55,8 @@ Label_Start:
 
     mov ax, 1301h   ; AH = 6, AL = 0h
     mov bx, 000fh   ; 黑底白字(BL = 07h)
+    mov dx, 0200h   ; 右下角(80, 50) row 2
     mov cx, 12      ; 左上角(0,0)
-    mov dx, 0200h   ; 右下角(80, 50)
     push ax
     mov ax, ds
     mov es, ax
@@ -289,7 +293,7 @@ Label_Get_Mem_Ok:
     mov bp, GetMemStructOkMessage
     int 10h
 
-;====== get SVGA infomation
+;====== get SVGA information
     mov ax, 1301h
     mov bx, 000Fh
     mov dx, 0800h
@@ -631,7 +635,7 @@ OffsetOfKernelFileCount dd OffsetOfKernelFile
 DisplayPosition dd 0
 
 StartLoaderMessage: db "Start Loader"
-NoLoaderMessage: db "ERROR: No KERNEL Found"
+NoLoaderMessage: db "ERROR:No KERNEL Found"
 KernelFileName: db "KERBAL  BIN", 0
 StartGetMemStructMessage: db "Start Get Memory Struct."
 GetMemStructErrMessage: db "Get Memory Struct ERROR"
@@ -642,5 +646,5 @@ GetSVGAVBEInfoErrMessage: db "Get SVGA VBE Info ERROR"
 GetSVGAVBEInfoOKMessage: db "Get SVGA VBE Info SUCCESSFUL!"
 
 StartGetSVGAModeInfoMessage: db "Start Get SVGA Mode Info"
-GetSVGAModeInfoErrMessage: db "Get SVGA Mode Info ERROT"
+GetSVGAModeInfoErrMessage: db "Get SVGA Mode Info ERROR"
 GetSVGAModeInfoOKMessage: db "Get SVGA Mode Info SUCCESSFUL!"
