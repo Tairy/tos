@@ -10,3 +10,7 @@ main.o: main.c
 
 system:	head.o main.o
 	ld -b elf64-x86-64 -o system head.o main.o -T kernel.lds
+
+
+clean:
+	rm -rf *.o *.s~ *.s *.S~ *.c~ *.h~ system Makefile~ Kernel.lds~ kernel.bin
