@@ -18,13 +18,13 @@ LABEL_GDT:          dd  0,           0
 LABEL_DESC_CODE32:  dd  0x0000FFFF,  0x00CF9A00
 LABEL_DESC_DATA32:  dd  0x0000FFFF,  0x00CF9200
 
-GdtLen  equ $ - LABEL_GDT ; GDT 长度
-GdtPtr  dw  GdtLen - 1    ; GDT 界限
-        dd  LABEL_GDT     ; GDT 基地址
+GdtLen      equ     $ - LABEL_GDT ; GDT 长度
+GdtPtr      dw      GdtLen - 1    ; GDT 界限
+            dd      LABEL_GDT     ; GDT 基地址
 
 ; GDT 选择子
-SelectorCode32  equ LABEL_DESC_CODE32 - LABEL_GDT
-SelectorData32  equ LABEL_DESC_DATA32 - LABEL_GDT
+SelectorCode32 equ     LABEL_DESC_CODE32 - LABEL_GDT
+SelectorData32 equ     LABEL_DESC_DATA32 - LABEL_GDT
 
 ; IA-32e 模式 GDT 结构
 [SECTION .gdt64]
@@ -41,7 +41,7 @@ SelectorCode64  equ LABEL_DESC_CODE64 - LABEL_GDT64
 SelectorData64  equ LABEL_DESC_DATA64 - LABEL_GDT64
 
 [SECTION .s16]
-[BITS 16]
+[BITS 16]   ; BITS 伪指令告诉 NASM 编译器产生的代码将运行在 16 位宽的处理器上
 
 Label_Start:
     mov     ax,     cs
@@ -73,7 +73,7 @@ Label_Start:
 
     cli ; 关闭外部中断
 
-    db      0x66
+;    db      0x66
     lgdt    [GdtPtr]
 
     mov     eax,    cr0
@@ -133,7 +133,7 @@ Label_Different:
     and     di,     0FFE0h
     add     di,     20h
     mov     si,     KernelFileName
-    jmp     Label_Search_For_LoaderBin
+    jmp     Label_Search_For_LoaderBin ; 0x000100fd
 
 Label_Goto_Next_Sector_In_Root_Dir:
     add     word    [SectorNo],     1
@@ -194,7 +194,7 @@ Label_Go_On_Loading_File:
     mov     ds,     ax
     mov     esi,    OffsetTmpOfKernelFile
 
-Label_Mov_Kernel:
+Label_Mov_Kernel: ;0x00010195
     mov     al,     byte    [ds:esi]
     mov     byte    [fs:edi],   al
 
@@ -228,9 +228,9 @@ Label_Mov_Kernel:
 Label_File_Loaded:
     mov     ax,     0B800h
     mov     gs,     ax
-    mov     ah,     0Fh
+    mov     ah,     0Fh                         ; 0000: 黑底  1111: 白字
     mov     al,     'G'
-    mov     [gs:((80 * 0 + 39) * 2)], ax ; 屏幕第 0 行，第 39 列
+    mov     [gs:((80 * 0 + 39) * 2)],   ax      ; 屏幕第 0 行，第 39 列
 
 KillMotor:
     push    dx
@@ -243,7 +243,7 @@ KillMotor:
     mov     ax,     1301h
     mov     bx,     000Fh
     mov     dx,     0400h
-    mov     cx,     24
+    mov     cx,     44
     push    ax
     mov     ax,     ds
     mov     es,     ax
@@ -268,7 +268,7 @@ Label_Get_Mem_Struct:
 
     cmp     ebx,    0
     jne     Label_Get_Mem_Struct
-    jmp     Label_Get_Mem_Ok
+    jmp     Label_Get_Mem_OK
 
 Label_Get_Mem_Fail:
     mov     dword   [MemStructNumber],  0
@@ -282,9 +282,8 @@ Label_Get_Mem_Fail:
     pop     ax
     mov     bp,     GetMemStructErrMessage
     int     10h
-    jmp     $
 
-Label_Get_Mem_Ok:
+Label_Get_Mem_OK:
     mov     ax,     1301h
     mov     bx,     000Fh
     mov     dx,     0600h
@@ -293,7 +292,7 @@ Label_Get_Mem_Ok:
     mov     ax,     ds
     mov     es,     ax
     pop     ax
-    mov     bp,     GetMemStructOkMessage
+    mov     bp,     GetMemStructOKMessage
     int     10h
 
 ;====== get SVGA information
@@ -342,7 +341,7 @@ Label_Get_Mem_Ok:
     mov     es,     ax
     pop     ax
     mov     bp, GetSVGAVBEInfoOKMessage
-    int     10h
+    int     10h ;0x0000000102bd
 
     mov     ax,     1301h
     mov     bx,     000Fh
@@ -369,7 +368,7 @@ Label_SVGA_Mode_Info_Get:
 
     mov     ax,     00h
     mov     al,     ch
-    call    Label_DispAL
+    call    Label_DispAL;0x000104ea
 
     mov     ax,     00h
     mov     al,     cl
@@ -424,12 +423,14 @@ Label_SVGA_Mode_Info_Finish:
     mov     bx,     4180h
     int     10h
 
+;====== set the SVGA mode
+
     mov     ax,     4F02h
-    mov     bx,     4180h
+    mov     bx,     4180h       ;====== mode: 0x180 or 0x142
     int     10h
 
     cmp     ax,     004Fh
-    jnz     Label_SET_SVGA_Mode_VESA_VBE_FAIL
+    jnz     Label_SET_SVGA_Mode_VESA_VBE_FAIL ;0x00010336
 
 ;====== init IDT GDT goto protect mode
     cli             ; close interrupt
@@ -454,10 +455,10 @@ GO_TO_TMP_Protect:
     mov     es,     ax
     mov     fs,     ax
     mov     ss,     ax
-    mov     esp,    7E00h
+    mov     esp,    7E00h ;0x000000010388
 
     call    support_long_mode
-    test    eax,    eax
+    test    eax,    eax     ;0x000000010392
     jz      no_support
 
 ;====== init temporary page table 0x90000
@@ -516,11 +517,11 @@ GO_TO_TMP_Protect:
     bts     eax,    31
     mov     cr0,    eax
 
-    jmp     SelectorCode64:OffsetOfKernelFile
+    jmp     SelectorCode64:OffsetOfKernelFile ;0x00000001043b
 
 ;====== test support long mode or not
 
-support_long_mode:
+support_long_mode: ;0x00010442
 
     mov     eax,    0x80000000
     cpuid
@@ -555,8 +556,6 @@ Func_ReadOneSector:
     inc     ah
     mov     cl,     ah
     mov     dh,     al
-    shr     al,     1
-    mov     ch,     al
     shr     al,     1
     mov     ch,     al
     and     dh,     1
@@ -672,7 +671,7 @@ NoLoaderMessage:                db  "ERROR:No KERNEL Found"
 KernelFileName:                 db  "KERNEL  BIN",0
 StartGetMemStructMessage:       db  "Start Get Memory Struct."
 GetMemStructErrMessage:         db  "Get Memory Struct ERROR"
-GetMemStructOkMessage:          db  "Get Memory Struct SUCCESSFUL!"
+GetMemStructOKMessage:          db  "Get Memory Struct SUCCESSFUL!"
 
 StartGetSVGAVBEInfoMessage:     db  "Start Get SVGA VBE Info"
 GetSVGAVBEInfoErrMessage:       db  "Get SVGA VBE Info ERROR"
