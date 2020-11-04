@@ -162,7 +162,7 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
     int field_width;
     int precision;
     int len, i;
-    
+
     int qualifier; /* 'h', 'l', 'L' or 'Z' for integer fields */
 
     for (str = buf; *fmt; fmt++) {
@@ -343,10 +343,9 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
                     break;
             }
         }
-
-        *str = '\0';
-        return str - buf;
     }
+    *str = '\0';
+    return str - buf;
 }
 
 int color_printk(unsigned int FRColor, unsigned int BKColor, const char *fmt, ...) {
@@ -354,7 +353,7 @@ int color_printk(unsigned int FRColor, unsigned int BKColor, const char *fmt, ..
     int count = 0;
     int line = 0;
     va_list args;
-    va_start(args, fmt);
+    va_start(args, fmt); // va_start 是一个宏，直接替换的
 
     i = vsprintf(buf, fmt, args);
 

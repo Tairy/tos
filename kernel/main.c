@@ -18,7 +18,7 @@ void Start_Kernel(void) {
     Pos.XCharSize = 8;
     Pos.YCharSize = 16;
 
-    Pos.FB_addr = (int *) 0xffff800000a00000;
+    Pos.FB_addr = (unsigned int *) 0xffff800000a00000;
     Pos.FB_length = (Pos.XResolution * Pos.YResolution * 4);
 
     for (i = 0; i < 1440 * 20; i++) {
@@ -50,7 +50,7 @@ void Start_Kernel(void) {
         addr += 1;
     }
 
-    color_printk(RED, BLACK, "Hello \t\t World!\n");
+    color_printk(GREEN, BLACK, "Hello World!");
     while (1);
 }
 
