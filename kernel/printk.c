@@ -67,10 +67,10 @@ int skip_atoi(const char **s) {
  */
 static char *number(char *str, long num, int base, int size, int precision, int type) {
     char c, sign, tmp[50];
-    const char *disgits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char *digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     int i;
 
-    if (type & SMALL) disgits = "0123456789abcdefghijklmnopqrstuvwxyz";
+    if (type & SMALL) digits = "0123456789abcdefghijklmnopqrstuvwxyz";
     if (type & LEFT) type &= ~ZEROPAD;
     if (base < 2 || base > 36) {
         return 0;
@@ -99,7 +99,7 @@ static char *number(char *str, long num, int base, int size, int precision, int 
         tmp[i++] = '0';
     } else {
         while (num != 0) {
-            tmp[i++] = disgits[do_div(num, base)];
+            tmp[i++] = digits[do_div(num, base)];
         }
     }
 
@@ -124,7 +124,7 @@ static char *number(char *str, long num, int base, int size, int precision, int 
             *str++ = '0';
         } else if (base == 16) {
             *str++ = '0';
-            *str++ = disgits[33];
+            *str++ = digits[33];
         }
     }
 
@@ -162,6 +162,7 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
     int field_width;
     int precision;
     int len, i;
+    
     int qualifier; /* 'h', 'l', 'L' or 'Z' for integer fields */
 
     for (str = buf; *fmt; fmt++) {
@@ -328,7 +329,6 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
                     break;
 
                 case '%':
-
                     *str++ = '%';
                     break;
 

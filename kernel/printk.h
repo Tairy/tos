@@ -32,6 +32,7 @@ extern unsigned char font_ascii[256][16];
 char buf[4096] = {0};
 
 struct position {
+    // 屏幕分辨率
     int XResolution;
     int YResolution;
 
