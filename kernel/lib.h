@@ -17,7 +17,7 @@
 // 又因为 ECX 寄存器的初始值是负数（0xffffffff), REPNE 指令执行结束后，ECX 寄存器依然是
 // 负值（ECX寄存器在函数执行过程中递减，使用负值可统计出扫描次数），对 ECX 寄存器取反减 1 后可
 // 得到字符串长度。
-inline int strlen(char *String) {
+inline static int strlen(char *String) {
     register int __res;
     __asm__ __volatile__ (      "cld \n\t"
                                 "repne \n\t"

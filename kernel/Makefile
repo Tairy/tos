@@ -15,4 +15,4 @@ printk.o: printk.c lib.h
 	gcc -static -mcmodel=large -fno-builtin -m64 -c printk.c -fno-stack-protector
 
 clean:
-	rm -rf *.o *.s~ *.s *.S~ *.c~ *.h~ system Makefile~ Kernel.lds~ kernel.bin
+	rm -rf *.o *.s~ *.s *.S~ *.c~ *.h~ *.h.gch system Makefile~ kernel.lds~ kernel.bin

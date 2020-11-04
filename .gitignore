@@ -4,3 +4,4 @@
 *.o
 *.s
 system
+*.h.gch
