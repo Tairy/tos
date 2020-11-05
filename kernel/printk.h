@@ -7,6 +7,7 @@
 
 #include <stdarg.h>
 #include "font.h"
+#include "linkpage.h"
 
 #define ZEROPAD 1   /*  pad with zero   */
 #define SIGN    2   /*  unsigned/signed long    */

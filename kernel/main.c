@@ -4,6 +4,8 @@
 
 #include "lib.h"
 #include "printk.h"
+#include "gate.h"
+#include "trap.h"
 
 void Start_Kernel(void) {
     int *addr = (int *) 0xffff800000a00000; // 帧缓冲区被映射的线性地址
@@ -51,6 +53,13 @@ void Start_Kernel(void) {
     }
 
     color_printk(GREEN, BLACK, "Hello \t\t World!\t\n");
+
+    load_TR(8);
+
+    set_tss64(0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00,
+              0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00);
+
+    sys_vector_init();
 
     i = 1 / 0;
     while (1);
