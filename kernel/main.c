@@ -50,7 +50,9 @@ void Start_Kernel(void) {
         addr += 1;
     }
 
-    color_printk(GREEN, BLACK, "Hello World!");
+    color_printk(GREEN, BLACK, "Hello \t\t World!\t\n");
+
+    i = 1 / 0;
     while (1);
 }
 
