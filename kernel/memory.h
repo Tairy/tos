@@ -78,6 +78,14 @@ struct Global_Memory_Descriptor {
     unsigned long end_of_struct; // 内存页管理结构结尾地址
 };
 
+// alloc_pages zone_select
+
+#define ZONE_DMA            (1 << 0)
+
+#define ZONE_NORMAL         (1 << 1)
+
+#define ZONE_UNMAPPED       (1 << 2)
+
 // struct page attribute
 
 #define PG_PTable_Mapped    (1 << 0)
