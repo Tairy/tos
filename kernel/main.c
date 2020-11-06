@@ -8,6 +8,12 @@
 #include "trap.h"
 #include "memory.h"
 
+// 这些标识符会被放在 kernel.lds 链接脚本制定的地址处
+extern char _text;
+extern char _etext;
+extern char _edata;
+extern char _end;
+
 struct Global_Memory_Descriptor memory_management_struct = {{0}, 0};
 
 void Start_Kernel(void) {
@@ -33,9 +39,14 @@ void Start_Kernel(void) {
 
     sys_vector_init();
 
+    memory_management_struct.start_code = (unsigned long) &_text;
+    memory_management_struct.end_code = (unsigned long) &_etext;
+    memory_management_struct.end_data = (unsigned long) &_edata;
+    memory_management_struct.end_brk = (unsigned long) &_end;
+
     color_printk(RED, BLACK, "memory init \n");
     init_memory();
-    
+
     while (1);
 }
 
