@@ -9,7 +9,7 @@
 #include "lib.h"
 
 // 20B
-struct Memory_E820_Formate {
+struct Memory_E820_Format {
     unsigned int address1;
     unsigned int address2;
     unsigned int length1;

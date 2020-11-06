@@ -22,7 +22,7 @@
 #define WHITE   0x00ffffff  // 白
 #define BLACK   0x00000000
 #define RED     0x00ff0000
-#define ORIGIN  0x00ff8000
+#define ORANGE  0x00ff8000
 #define YELLOW  0x00ffff00
 #define GREEN   0x0000ff00
 #define BLUE    0x000000ff
