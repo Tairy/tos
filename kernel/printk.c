@@ -204,146 +204,147 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
 
             if (field_width < 0) {
                 field_width = -field_width;
-                flags | LEFT;
+                flags |= LEFT;
             }
+        }
 
-            /* get the precision */
-            precision = -1;
-            if (*fmt == '.') {
+        /* get the precision */
+        precision = -1;
+        if (*fmt == '.') {
+            fmt++;
+            if (is_digit(*fmt)) {
+                precision = skip_atoi(&fmt);
+            } else if (*fmt == '*') {
                 fmt++;
-                if (is_digit(*fmt)) {
-                    precision = skip_atoi(&fmt);
-                } else if (*fmt == '*') {
-                    fmt++;
-                    precision = va_arg(args,
-                    int);
-                }
-
-                if (precision < 0) {
-                    precision = 0;
-                }
+                precision = va_arg(args,
+                int);
             }
 
-            qualifier = -1;
-            if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L' || *fmt == 'Z') {
-                qualifier = *fmt;
-                fmt++;
+            if (precision < 0) {
+                precision = 0;
             }
+        }
 
-            switch (*fmt) {
-                case 'c':
-                    if (!(flags & LEFT)) {
-                        while (--field_width > 0) {
-                            *str++ = ' ';
-                        }
-                    }
-                    *str++ = (unsigned char) va_arg(args,
-                    int);
+        qualifier = -1;
+        if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L' || *fmt == 'Z') {
+            qualifier = *fmt;
+            fmt++;
+        }
+
+        switch (*fmt) {
+            case 'c':
+                if (!(flags & LEFT)) {
                     while (--field_width > 0) {
                         *str++ = ' ';
                     }
-                    break;
-                case 's':
-                    s = va_arg(args,
-                    char*);
-                    if (!s) {
-                        s = '\0';
-                    }
-                    len = strlen(s);
-                    if (precision < 0) {
-                        precision = len;
-                    } else if (len > precision) {
-                        len = precision;
-                    }
+                }
+                *str++ = (unsigned char) va_arg(args,
+                int);
+                while (--field_width > 0) {
+                    *str++ = ' ';
+                }
+                break;
+            case 's':
+                s = va_arg(args,
+                char*);
+                if (!s) {
+                    s = '\0';
+                }
+                len = strlen(s);
+                if (precision < 0) {
+                    precision = len;
+                } else if (len > precision) {
+                    len = precision;
+                }
 
-                    if (!(flags & LEFT)) {
-                        while (len < field_width--) {
-                            *str++ = ' ';
-                        }
-                    }
-
-                    for (i = 0; i < len; i++) {
-                        *str++ = *s++;
-                    }
-
+                if (!(flags & LEFT)) {
                     while (len < field_width--) {
                         *str++ = ' ';
                     }
-                    break;
-                case 'o':
-                    if (qualifier == 'l') {
-                        str = number(str, va_arg(args,
-                        unsigned long), 8, field_width, precision, flags);
-                    } else {
-                        str = number(str, va_arg(args,
-                        unsigned int), 8, field_width, precision, flags);
-                    }
+                }
 
-                    break;
+                for (i = 0; i < len; i++) {
+                    *str++ = *s++;
+                }
 
-                case 'p':
-                    if (field_width == -1) {
-                        field_width = 2 * sizeof(void *);
-                        flags |= ZEROPAD;
-                    }
+                while (len < field_width--) {
+                    *str++ = ' ';
+                }
+                break;
+            case 'o':
+                if (qualifier == 'l') {
+                    str = number(str, va_arg(args,
+                    unsigned long), 8, field_width, precision, flags);
+                } else {
+                    str = number(str, va_arg(args,
+                    unsigned int), 8, field_width, precision, flags);
+                }
 
-                    str = number(str, (unsigned long) va_arg(args,
-                    void *), 16, field_width, precision, flags);
-                    break;
+                break;
 
-                case 'x':
-                    flags |= SMALL;
+            case 'p':
+                if (field_width == -1) {
+                    field_width = 2 * sizeof(void *);
+                    flags |= ZEROPAD;
+                }
 
-                case 'X':
-                    if (qualifier == 'l') {
-                        str = number(str, va_arg(args,
-                        unsigned long), 16, field_width, precision, flags);
-                    } else {
-                        str = number(str, va_arg(args,
-                        unsigned int), 16, field_width, precision, flags);
-                    }
-                    break;
-                case 'd':
-                case 'i':
-                    flags |= SIGN;
-                case 'u':
-                    if (qualifier == 'l') {
-                        str = number(str, va_arg(args,
-                        unsigned long), 10, field_width, precision, flags);
-                    } else {
-                        str = number(str, va_arg(args,
-                        unsigned int), 10, field_width, precision, flags);
-                    }
-                    break;
+                str = number(str, (unsigned long) va_arg(args,
+                void *), 16, field_width, precision, flags);
+                break;
 
-                case 'n':
-                    if (qualifier == 'l') {
-                        long *ip = va_arg(args,
-                        long *);
-                        *ip = (str - buf);
-                    } else {
-                        int *ip = va_arg(args,
-                        int *);
-                        *ip = (str - buf);
-                    }
+            case 'x':
+                flags |= SMALL;
 
-                    break;
+            case 'X':
+                if (qualifier == 'l') {
+                    str = number(str, va_arg(args,
+                    unsigned long), 16, field_width, precision, flags);
+                } else {
+                    str = number(str, va_arg(args,
+                    unsigned int), 16, field_width, precision, flags);
+                }
+                break;
+            case 'd':
+            case 'i':
+                flags |= SIGN;
+            case 'u':
+                if (qualifier == 'l') {
+                    str = number(str, va_arg(args,
+                    unsigned long), 10, field_width, precision, flags);
+                } else {
+                    str = number(str, va_arg(args,
+                    unsigned int), 10, field_width, precision, flags);
+                }
+                break;
 
-                case '%':
-                    *str++ = '%';
-                    break;
+            case 'n':
+                if (qualifier == 'l') {
+                    long *ip = va_arg(args,
+                    long *);
+                    *ip = (str - buf);
+                } else {
+                    int *ip = va_arg(args,
+                    int *);
+                    *ip = (str - buf);
+                }
 
-                default:
-                    *str++ = '%';
-                    if (*fmt) {
-                        *str++ = *fmt;
-                    } else {
-                        fmt--;
-                    }
+                break;
 
-                    break;
-            }
+            case '%':
+                *str++ = '%';
+                break;
+
+            default:
+                *str++ = '%';
+                if (*fmt) {
+                    *str++ = *fmt;
+                } else {
+                    fmt--;
+                }
+
+                break;
         }
+
     }
     *str = '\0';
     return str - buf;

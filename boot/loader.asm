@@ -256,6 +256,7 @@ KillMotor:
     mov     es,     ax
     mov     di,     MemoryStructBufferAddr
 
+; INT 15h AX = E820h 获取物理内存并保存在 7E00h 处
 Label_Get_Mem_Struct:
     mov     eax,    0x0E820
     mov     ecx,    20
