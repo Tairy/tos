@@ -6,3 +6,4 @@
 system
 *.h.gch
 *.txt
+*.out

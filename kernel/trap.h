@@ -5,7 +5,7 @@
 #ifndef TOS_TRAP_H
 #define TOS_TRAP_H
 
-#include "linkpage.h"
+#include "linkage.h"
 #include "printk.h"
 #include "lib.h"
 

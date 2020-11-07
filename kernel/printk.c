@@ -4,7 +4,7 @@
 #include <stdarg.h> // 引入支持可变参数
 #include "printk.h"
 #include "lib.h"
-#include "linkpage.h"
+#include "linkage.h"
 
 /**
  * 向屏幕输出一个字符

@@ -7,6 +7,17 @@
 
 #define NULL 0
 
+#define container_of(ptr, type, member)                                     \
+({                                                                          \
+    typeof(((type * )0)->member) * p = (ptr);                               \
+    (type *)((unsigned long)p - (unsigned long) & (((type*)0)->member));    \
+})
+
+#define sti()       __asm__ __volatile__ ("sti      \n\t":::"memory")
+#define cli()       __asm__ __volatile__ ("cli      \n\t":::"memory")
+#define nop()       __asm__ __volatile__ ("nop      \n\t")
+#define io_mfence() __asm__ __volatile__ ("mfence   \n\t":::"memory")
+
 // 函数 strlen 先将 AL 寄存器赋值为 0, 随后借助 SCASB 汇编指令逐字节扫描 String 字符串，
 // 每次扫描都会与 AL 寄存器进行对比，并根据对比结果置位相应标志位，如果扫描的数值与 AL 寄存器
 // 的数值相等（同为 0 值），ZF 标志位被置位。
@@ -55,4 +66,52 @@ inline static void *memset(void *Address, unsigned char C, long Count) {
     return Address;
 }
 
+inline static unsigned char io_in8(unsigned short port) {
+    unsigned char ret = 0;
+    __asm__ __volatile__(
+    "inb    %%dx,   %0      \n\t"
+    "mfence                 \n\t"
+    :"=a"(ret)
+    :"d"(port)
+    :"memory"
+    );
+
+    return ret;
+}
+
+inline static unsigned int io_in32(unsigned short port) {
+    unsigned int ret = 0;
+    __asm__ __volatile__(
+    "inl    %%dx,   %0      \n\t"
+    "mfence                 \n\t"
+    :"=a"(ret)
+    :"d"(port)
+    :"memory");
+
+    return ret;
+}
+
+inline static void io_out8(unsigned short port, unsigned char value) {
+    __asm__ __volatile__(
+    "outb   %0,     %%dx    \n\t"
+    "mfence                 \n\t"
+    :
+    :"a"(value), "d"(port)
+    :"memory");
+}
+
+inline static void io_out32(unsigned short port, unsigned char value) {
+    __asm__ __volatile__(
+    "outl   %0,     %%dx    \n\t"
+    "mfence                 \n\t"
+    :
+    :"a"(value), "d"(port)
+    :"memory");
+}
+
+#define port_insw(port, buffer, nr)                                                     \
+__asm__ __volatile__("cld;rep;insw;mfence;"::"d"(port),"D"(buffer),"c"(nr):"memory")
+
+#define port_outsw(port, buffer, nr)                                                    \
+__asm__ __volatile__("cld;rep;outsw;mfence;"::"d"(port), "S"(buffer), "c"(nr):"memory")
 #endif //TOS_LIB_H

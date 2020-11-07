@@ -52,7 +52,7 @@ void init_memory() {
 
         p++;
 
-        //截断并剔除 E820 数组总的脏数据
+        //截断并剔除 E820 数组中的脏数据
         if (p->type > 4 || p->length == 0 || p->type < 1) {
             break;
         }
@@ -70,6 +70,7 @@ void init_memory() {
             continue;
         }
 
+        // min 2M
         start = PAGE_2M_ALIGN(memory_management_struct.e820[i].address);
         end = ((memory_management_struct.e820[i].address + memory_management_struct.e820[i].length) >> PAGE_2M_SHIFT)
                 << PAGE_2M_SHIFT;
@@ -77,12 +78,13 @@ void init_memory() {
             continue;
         }
 
+        // 总的物理页数
         TotalMem += (end - start) >> PAGE_2M_SHIFT;
     }
 
     color_printk(ORANGE, BLACK, "OS Can Used Total 2M PAGEs:%#010x=%010d\n", TotalMem, TotalMem);
 
-    // 总的物理内存
+    // 总的物理内存 单位 bit
     TotalMem = memory_management_struct.e820[memory_management_struct.e820_length].address +
                memory_management_struct.e820[memory_management_struct.e820_length].length;
 
@@ -174,7 +176,7 @@ void init_memory() {
     }
 
     // init address 0 to page struct 0
-    // 对 0 ~ 2MB 的物理呢村进行特殊的初始化
+    // 对 0 ~ 2MB 的物理内存进行特殊的初始化
     memory_management_struct.pages_struct->zone_struct = memory_management_struct.zones_struct;
     memory_management_struct.pages_struct->PHY_address = 0UL;
     memory_management_struct.pages_struct->attribute = 0;
