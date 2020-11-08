@@ -7,6 +7,7 @@
 
 #define NULL 0
 
+// 根据结构体变量内的某个成员变量基地址，准确的计算出结构体变量的基地址，即反向推导出父结构的起始地址
 #define container_of(ptr, type, member)                                     \
 ({                                                                          \
     typeof(((type * )0)->member) * p = (ptr);                               \
@@ -17,6 +18,60 @@
 #define cli()       __asm__ __volatile__ ("cli      \n\t":::"memory")
 #define nop()       __asm__ __volatile__ ("nop      \n\t")
 #define io_mfence() __asm__ __volatile__ ("mfence   \n\t":::"memory")
+
+struct List {
+    struct List *prev;
+    struct List *next;
+};
+
+inline static void list_init(struct List *list) {
+    list->prev = list;
+    list->next = list;
+}
+
+inline static void list_add_to_behind(struct List *entry, struct List *new_node) {
+    new_node->next = entry->next;
+    new_node->prev = entry;
+    new_node->next->prev = new_node;
+    entry->next = new_node;
+}
+
+inline static void list_add_to_before(struct List *entry, struct List *new_node) {
+    new_node->next = entry;
+    entry->prev->next = new_node;
+    new_node->prev = entry->prev;
+    entry->prev = new_node;
+}
+
+inline static void list_del(struct List *entry) {
+    entry->next->prev = entry->prev;
+    entry->prev->next = entry->next;
+}
+
+inline static long list_is_empty(struct List *entry) {
+    if (entry == entry->next && entry->prev == entry) {
+        return 1;
+    }
+
+    return 0;
+}
+
+inline static struct List *list_prev(struct List *entry) {
+    if (entry->prev != NULL) {
+        return entry->prev;
+    } else {
+        return NULL;
+    }
+}
+
+inline static struct List *list_next(struct List *entry) {
+    if (entry->next != NULL) {
+        return entry->next;
+    } else {
+        return NULL;
+    }
+}
+
 
 // 函数 strlen 先将 AL 寄存器赋值为 0, 随后借助 SCASB 汇编指令逐字节扫描 String 字符串，
 // 每次扫描都会与 AL 寄存器进行对比，并根据对比结果置位相应标志位，如果扫描的数值与 AL 寄存器
@@ -40,6 +95,31 @@ inline static int strlen(char *String) {
     );
 
     return __res;
+}
+
+inline static void *memcpy(void *From, void *To, long Num) {
+    int d0, d1, d2;
+
+    __asm__ __volatile__ (
+    "cld                        \n\t"
+    "rep                        \n\t"
+    "movsq                      \n\t"
+    "testb      $4,     %b4     \n\t"
+    "je         1f              \n\t"
+    "movsl                      \n\t"
+    "1:\ttestb  $2,     %b4     \n\t"
+    "je         2f              \n\t"
+    "movsw                      \n\t"
+    "2:\ttestb  $1,     %b4     \n\t"
+    "je         2f              \n\t"
+    "movsb                      \n\t"
+    "3:                         \n\t"
+    :"=&c"(d0), "=&D"(d1), "=&S"(d2)
+    :"0"(Num / 8), "q"(Num), "1"(To), "2"(From)
+    :"memory"
+    );
+
+    return To;
 }
 
 inline static void *memset(void *Address, unsigned char C, long Count) {

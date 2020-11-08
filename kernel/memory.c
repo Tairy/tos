@@ -275,7 +275,7 @@ struct Page *alloc_pages(int zone_select, int number, unsigned long page_flags) 
         }
 
         z = memory_management_struct.zones_struct + i;
-        start = z->zone_start_address >> PAGE_2M_SHIFT;
+        start = z->zone_start_address >> PAGE_2M_SHIFT; // 这样移位可以计算出 address 在 bit_map 的索引
         end = z->zone_end_address >> PAGE_2M_SHIFT;
         length = z->zone_length >> PAGE_2M_SHIFT;
 

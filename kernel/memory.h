@@ -46,6 +46,76 @@
 #define Virt_To_2M_Page(kaddr) (memory_management_struct.pages_struct + (Virt_To_Phy(kaddr) >> PAGE_2M_SHIFT))
 #define Phy_To_2M_Page(kaddr) (memory_management_struct.pages_struct + ((unsigned long) (kaddr) >> PAGE_2M_SHIFT))
 
+// page table attrbute
+
+// bit 63 execution disable
+#define PAGE_XD             (unsigned long) 0x10000000000000000
+
+// bit 12 Page Attribute Table
+#define PAGE_PAT            (unsigned long) 0x1000
+
+// bit 8 Global Page:1, global;0, part
+#define PAGE_Global         (unsigned long) 0x0100
+
+// bit 7 Page Size:1, big page;0,small page;
+#define PAGE_PS             (unsigned long) 0x0080
+
+// bit 6 Dirty:1, dirty;0, clean;
+#define PAGE_Dirty          (unsigned long) 0x0040
+
+// bit 5 Accessed:1,visited;0,unvisited
+#define PAGE_Accessed       (unsigned long) 0x0020
+
+// bit 4 Page Level Cache Disable
+#define PAGE_PCD            (unsigned long) 0x0010
+
+// bit 3 Page Level Write Through
+#define PAGE_PWT            (unsigned long) 0x0008
+
+// bit 2 User Supervisor:1user and supervisor;0,supervisor;
+#define PAGE_U_S            (unsigned long) 0x0004
+
+// bit 1 Read Write:1 read and write;0,read;
+#define PAGE_R_W            (unsigned long) 0x0002
+
+// bit 0 Present:1, present;0 no present;
+#define PAGE_Present        (unsigned long) 0x0001
+
+// 1,0
+#define PAGE_KERNEL_GDT     (PAGE_R_W | PAGE_Present)
+
+// 1,0
+#define PAGE_KERNEL_Dir     (PAGE_R_W | PAGE_Present)
+
+// 7,1,0
+#define PAGE_KERNEL_Page    (PAGE_PS | PAGE_R_W | PAGE_Present)
+
+// 2,1,0
+#define PAGE_USER_Dir       (PAGE_U_S | PAGE_R_W | PAGE_Present)
+
+// 7,2,1,0
+#define PAGE_USER_Page      (PAGE_PS | PAGE_U_S | PAGE_R_W | PAGE_Present)
+
+typedef struct {
+    unsigned long pml4t;
+} pml4t_t;
+
+#define mk_mpl4t(addr, attr)    ((unsigned long)(addr) | (unsigned long)(attr))
+#define set_mpl4t(mpl4tptr, mpl4tval)   (*(pdptptr) = (pdptval))
+
+typedef struct {
+    unsigned long pdpt;
+} pdpt_t;
+#define mk_pdpt(addr, attr)     ((unsigned long)(addr) | (unsigned long)(attr))
+#define set_pdt(pdtptr, pdtval)     (*(pdtptr) = (pdtval))
+
+typedef struct {
+    unsigned long pt;
+} pt_t;
+#define mk_pt(addr, attr)       ((unsigned long)(addr | (unsigned long)(attr)))
+#define set_pt(ptptr, ptval)       (*(ptptr) = (ptval))
+
+
 unsigned long *Global_CR3 = NULL;
 
 // __attribute__((packed)) 修饰不会生成对齐空间，改用紧凑格式

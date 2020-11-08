@@ -1,8 +1,10 @@
+#include "linkage.h"
+
 .section .text
 
 .globl _start
 
-_start:
+ENTRY(_start)
     mov     $0x10,      %ax
     mov     %ax,        %ds
     mov     %ax,        %es
@@ -159,6 +161,9 @@ Loop:
 
 int_msg:
     .asciz "Unknown interrupt for fault at RIP\n"
+
+ENTRY(_stack_start)
+    .quad   init_task_union + 32768
 
 //====== init page
 .align 8

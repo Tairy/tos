@@ -8,6 +8,7 @@
 #include "trap.h"
 #include "memory.h"
 #include "interrupt.h"
+#include "task.h"
 
 // 这些标识符会被放在 kernel.lds 链接脚本制定的地址处
 extern char _text;
@@ -52,6 +53,9 @@ void Start_Kernel(void) {
 
     color_printk(RED, BLACK, "interrupt init \n");
     init_interrupt();
+
+    color_printk(RED, BLACK, "task_init \n");
+    task_init();
 
 
 //    color_printk(RED, BLACK, "memory_management_struct.bits_map:%#018lx\n", *memory_management_struct.bits_map);
