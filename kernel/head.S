@@ -2,8 +2,6 @@
 
 .section .text
 
-.globl _start
-
 ENTRY(_start)
     mov     $0x10,      %ax
     mov     %ax,        %ds
@@ -45,7 +43,7 @@ entry64:
     movq    %rax,   %es
     movq    %rax,   %gs
     movq    %rax,   %ss
-    movq    $0xffff800000007E00,    %rsp    /* rsp address */
+    movq    _stack_start(%rip),    %rsp    /* rsp address */
 
 setup_IDT:
     leaq    ignore_int(%rip),   %rdx
@@ -120,6 +118,11 @@ ignore_int:
     pushq   %r14
     pushq   %r15
 
+    movq    %es,            %rax
+    pushq   %rax
+    movq    %ds,            %rax
+    pushq   %rax
+
     movq    $0x10,          %rax
     movq    %rax,           %ds
     movq    %rax,           %es
@@ -131,7 +134,7 @@ ignore_int:
     movq    $0x00ff0000,    %rdi
     movq    $0,             %rax
     callq   color_printk
-    addq    0x8,            %rsp
+    addq    $0x8,           %rsp
 
 Loop:
     jmp     Loop

@@ -122,6 +122,26 @@ inline static void *memcpy(void *From, void *To, long Num) {
     return To;
 }
 
+inline static int memcmp(void *FirstPart, void *SecondPart, long Count) {
+    register int __res;
+
+    __asm__ __volatile__ (
+    "cld                    \n\t"
+    "repe                   \n\t"
+    "cmpsb                  \n\t"
+    "je     1f              \n\t"
+    "movl   $1,     %%eax   \n\t"
+    "jl     1f              \n\t"
+    "negl   %%eax           \n\t"
+    "1:                     \n\t"
+    :"=a"(__res)
+    :"0"(0), "D"(FirstPart), "S"(SecondPart), "c"(Count)
+    :
+    );
+
+    return __res;
+}
+
 inline static void *memset(void *Address, unsigned char C, long Count) {
     int d0, d1;
     unsigned long tmp = C * 0x0101010101010101UL;

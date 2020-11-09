@@ -93,7 +93,7 @@ void init_memory() {
     // 此举是为了保留一小段隔离空间，以防止误操作损坏其他空间数据
     // 紧接着将 bit_maps 空间全部置位，以标注非内存页（内存空洞和 ROM 空间）已被使用，
     // 随后再通过程序将映射位图中的可用物理内存复位
-    memory_management_struct.bits_map = (unsigned long *) ((memory_management_struct.end_brk + PAGE_4k_SIZE - 1) &
+    memory_management_struct.bits_map = (unsigned long *) ((memory_management_struct.end_brk + PAGE_4K_SIZE - 1) &
                                                            PAGE_4K_MASK);
     memory_management_struct.bits_size = TotalMem >> PAGE_2M_SHIFT;
     memory_management_struct.bits_length =
@@ -105,7 +105,7 @@ void init_memory() {
     // 数组的元素数量为物理地址空间可分页数
     // struct_page 结构体数组全部清零已被后续初始化使用
     memory_management_struct.pages_struct = (struct Page *) (
-            ((unsigned long) memory_management_struct.bits_map + memory_management_struct.bits_length + PAGE_4k_SIZE -
+            ((unsigned long) memory_management_struct.bits_map + memory_management_struct.bits_length + PAGE_4K_SIZE -
              1) & PAGE_4K_MASK);
     memory_management_struct.pages_size = TotalMem >> PAGE_2M_SHIFT;
     memory_management_struct.pages_length =
@@ -118,7 +118,7 @@ void init_memory() {
     // 而将 zones_length 成员变量暂且按照 5 个 struct_zone 结构体来计算
     memory_management_struct.zones_struct = (struct Zone *) (
             ((unsigned long) memory_management_struct.pages_struct + memory_management_struct.pages_length +
-             PAGE_4k_SIZE - 1) & PAGE_4K_MASK);
+             PAGE_4K_SIZE - 1) & PAGE_4K_MASK);
     memory_management_struct.zones_size = 0;
     memory_management_struct.zones_length = (5 * sizeof(struct Zone) + sizeof(long) - 1) & (~(sizeof(long) - 1));
 

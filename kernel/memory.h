@@ -28,11 +28,11 @@
 
 // 2 MB 页容量
 #define PAGE_2M_SIZE    (1UL << PAGE_2M_SHIFT)
-#define PAGE_4k_SIZE    (1UL << PAGE_4K_SHIFT)
+#define PAGE_4K_SIZE    (1UL << PAGE_4K_SHIFT)
 
 // 屏蔽码，屏蔽低于 2 MB 的数值
 #define PAGE_2M_MASK    (~ (PAGE_2M_SIZE - 1 ))
-#define PAGE_4K_MASK    (~ (PAGE_4k_SIZE - 1 ))
+#define PAGE_4K_MASK    (~ (PAGE_4K_SIZE - 1 ))
 
 // 将参数 addr 按 2 MB 页的上边界对齐
 #define PAGE_2M_ALIGN(addr) (((unsigned long) (addr) + PAGE_2M_SIZE - 1) & PAGE_2M_MASK )

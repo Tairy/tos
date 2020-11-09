@@ -145,8 +145,10 @@ void task_init() {
 
     init_mm.start_stack = _stack_start;
 
-    set_tss64(init_thread.rsp0, init_tss[0].rsp1, init_tss[0].rsp2, init_tss[0].ist1, init_tss[0].ist2,
-              init_tss[0].ist3, init_tss[0].ist4, init_tss[0].ist5, init_tss[0].ist6, init_tss[0].ist7);
+    set_tss64(
+            init_thread.rsp0, init_tss[0].rsp1, init_tss[0].rsp2, init_tss[0].ist1, init_tss[0].ist2,
+            init_tss[0].ist3, init_tss[0].ist4, init_tss[0].ist5, init_tss[0].ist6, init_tss[0].ist7
+    );
 
     init_tss[0].rsp0 = init_thread.rsp0;
     list_init(&init_task_union.task.list);
