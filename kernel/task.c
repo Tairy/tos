@@ -8,6 +8,7 @@
 #include "lib.h"
 #include "memory.h"
 #include "linkage.h"
+#include "gate.h"
 
 unsigned long init(unsigned long arg) {
     color_printk(RED, BLACK, "init task is running, arg:%#018lx\n", arg);
@@ -24,7 +25,7 @@ do_fork(struct pt_regs *regs, unsigned long clone_flags, unsigned long stack_sta
 
     p = alloc_pages(ZONE_NORMAL, 1, PG_PTable_Mapped | PG_Active | PG_Kernel);
 
-    color_printk(WHITE, BLACK, "alloc_pages, bitmap:%#018lx", *memory_management_struct.bits_map);
+    color_printk(WHITE, BLACK, "alloc_pages, bitmap:%#018lx\n", *memory_management_struct.bits_map);
 
     tsk = (struct task_struct *) Phy_To_Virt(p->PHY_address);
     color_printk(WHITE, BLACK, "struct task_struct address:%#018lx\n", (unsigned long) tsk);
@@ -110,7 +111,7 @@ int kernel_thread(unsigned long (*fn)(unsigned long), unsigned long arg, unsigne
 
 // 首先将 next 进程的内核层栈基地址设置到 TSS 结构体对应的成员变量中，随后，保存当前进程的 FS 和 GS 段寄存器值，
 // 再将 next 进程保存的 FS 和 GS 段寄存器值还原
-inline static void __switch_to(struct task_struct *prev, struct task_struct *next) {
+static void __switch_to(struct task_struct *prev, struct task_struct *next) {
     init_tss[0].rsp0 = next->thread->rsp0;
 
     set_tss64(init_tss[0].rsp0, init_tss[0].rsp1, init_tss[0].rsp2, init_tss[0].ist1, init_tss[0].ist2,
@@ -149,10 +150,9 @@ void task_init() {
 
     init_tss[0].rsp0 = init_thread.rsp0;
     list_init(&init_task_union.task.list);
-    kernel_thread(init, 10, CLONE_FS | CLONE_FILES | CLONE_SIGNAL);
+    kernel_thread(init, 10, CLONE_FS | CLONE_FILES | CLONE_SIGNAL);;
     init_task_union.task.state = TASK_RUNNING;
     p = container_of(list_next(&current->list), struct task_struct, list);
-
     switch_to(current, p);
 }
 

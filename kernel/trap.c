@@ -83,20 +83,24 @@ void do_invalid_TSS(unsigned long rsp, unsigned long error_code) {
     p = (unsigned long *) (rsp + 0x98);
     color_printk(RED, BLACK, "do_invalid_TSS(10),ERROR_CODE:%#018lx,RSP:%#018lx,RIP:%#018lx\n", error_code, rsp, *p);
 
-    if (error_code & 0x01)
+    if (error_code & 0x01) {
         color_printk(RED, BLACK,
                      "The exception occurred during delivery of an event external to the program,such as an interrupt or an earlier exception.\n");
+    }
 
-    if (error_code & 0x02)
+    if (error_code & 0x02) {
         color_printk(RED, BLACK, "Refers to a gate descriptor in the IDT;\n");
-    else
+    } else {
         color_printk(RED, BLACK, "Refers to a descriptor in the GDT or the current LDT;\n");
-
-    if ((error_code & 0x02) == 0)
-        if (error_code & 0x04)
+    }
+    
+    if ((error_code & 0x02) == 0) {
+        if (error_code & 0x04) {
             color_printk(RED, BLACK, "Refers to a segment or gate descriptor in the LDT;\n");
-        else
+        } else {
             color_printk(RED, BLACK, "Refers to a descriptor in the current GDT;\n");
+        }
+    }
 
     color_printk(RED, BLACK, "Segment Selector Index:%#010x\n", error_code & 0xfff8);
 
@@ -161,20 +165,24 @@ void do_general_protection(unsigned long rsp, unsigned long error_code) {
     color_printk(RED, BLACK, "do_general_protection(13),ERROR_CODE:%#018lx,RSP:%#018lx,RIP:%#018lx\n", error_code, rsp,
                  *p);
 
-    if (error_code & 0x01)
+    if (error_code & 0x01) {
         color_printk(RED, BLACK,
                      "The exception occurred during delivery of an event external to the program,such as an interrupt or an earlier exception.\n");
+    }
 
-    if (error_code & 0x02)
+    if (error_code & 0x02) {
         color_printk(RED, BLACK, "Refers to a gate descriptor in the IDT;\n");
-    else
+    } else {
         color_printk(RED, BLACK, "Refers to a descriptor in the GDT or the current LDT;\n");
-
-    if ((error_code & 0x02) == 0)
-        if (error_code & 0x04)
+    }
+    if ((error_code & 0x02) == 0) {
+        if (error_code & 0x04) {
             color_printk(RED, BLACK, "Refers to a segment or gate descriptor in the LDT;\n");
-        else
+        } else {
             color_printk(RED, BLACK, "Refers to a descriptor in the current GDT;\n");
+        }
+    }
+
 
     color_printk(RED, BLACK, "Segment Selector Index:%#010x\n", error_code & 0xfff8);
 

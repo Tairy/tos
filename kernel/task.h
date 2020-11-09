@@ -6,8 +6,8 @@
 #define TOS_TASK_H
 
 #include "memory.h"
-#include "lib.h"
 #include "cpu.h"
+#include "lib.h"
 #include "ptrace.h"
 
 #define KERNEL_CS   (0x00)
