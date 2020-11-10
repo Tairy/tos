@@ -12,8 +12,8 @@
 
 #define KERNEL_CS   (0x00)
 #define KERNEL_DS   (0x10)
-#define USER_CS (0x28)
-#define USER_DS (0x30)
+#define USER_CS     (0x28)
+#define USER_DS     (0x30)
 
 #define CLONE_FS        (1<<0)
 #define CLONE_FILES     (1<<1)
@@ -201,5 +201,18 @@ unsigned long
 do_fork(struct pt_regs *regs, unsigned long clone_flags, unsigned long stack_start, unsigned long stack_size);
 
 void task_init();
+
+#define MAX_SYSTEM_CALL_NR 128
+
+typedef unsigned long (*system_call_t)(struct pt_regs *regs);
+
+unsigned long no_system_call(struct pt_regs *regs) {
+    color_printk(RED, BLACK, "no_system_call is calling, NR:%#04x\n", regs->rax);
+    return -1;
+}
+
+system_call_t system_call_table[MAX_SYSTEM_CALL_NR] = {
+        [0 ... MAX_SYSTEM_CALL_NR - 1] = no_system_call
+};
 
 #endif //TOS_TASK_H

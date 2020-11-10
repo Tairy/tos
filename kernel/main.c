@@ -36,7 +36,7 @@ void Start_Kernel(void) {
     Pos.FB_addr = (unsigned int *) 0xffff800000a00000;
     Pos.FB_length = (Pos.XResolution * Pos.YResolution * 4);
 
-    load_TR(8);
+    load_TR(10);
 
     set_tss64(0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00,
               0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00, 0xffff800000007c00);
