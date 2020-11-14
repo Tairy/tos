@@ -2,11 +2,12 @@
 
 RED_COLOR='\E[1;31m'
 RESET='\E[0m'
-BOOT_DIR='./boot'
+SRC_DIR='./src'
+BOOT_DIR=${SRC_DIR}'/boot'
 
 echo -e "${RED_COLOR}=== env check ===${RESET}"
 
-if [ ! -e .bochsrc ]; then
+if [ ! -e ${SRC_DIR}/.bochsrc ]; then
   echo "no .bochsrc,please checkout!"
   exit 1
 fi
@@ -64,7 +65,7 @@ umount tmp/
 rm -rf tmp
 
 if [ -e /usr/local/bin/bochs ]; then
-  /usr/local/bin/bochs -qf .bochsrc
+  /usr/local/bin/bochs -qf ${SRC_DIR}/.bochsrc
 else
   echo "Please check your bochs environment!!!"
   exit 1

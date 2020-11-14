@@ -45,8 +45,8 @@ void init_memory() {
             TotalMem += p->length;
         }
 
-        memory_management_struct.e820[i].address += p->address; // 这里的 += 与 = 没区别
-        memory_management_struct.e820[i].length += p->length;
+        memory_management_struct.e820[i].address = p->address;
+        memory_management_struct.e820[i].length = p->length;
         memory_management_struct.e820[i].type = p->type;
         memory_management_struct.e820_length = i;
 
